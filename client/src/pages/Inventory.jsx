@@ -861,14 +861,14 @@ const Inventory = () => {
                       {/* Flow Header: Crop -> Livestock */}
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className="inline-flex items-center space-x-1 font-extrabold text-gray-900 text-base">
-                          <span className="text-amber-600">🌾 {usage.cropType}</span>
+                          <span className="text-amber-700 font-bold">{usage.cropType}</span>
                         </span>
                         
                         <ArrowRight size={14} className="text-gray-400 flex-shrink-0" />
 
                         <span className="inline-flex items-center space-x-1 font-extrabold text-emerald-800 text-base">
                           <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-lg text-xs font-bold">
-                            🐄 {usage.fedToLivestock}
+                            {usage.fedToLivestock}
                           </span>
                         </span>
 
@@ -963,19 +963,19 @@ const Inventory = () => {
                 >
                   <option value="">-- Select Crop from DB --</option>
                   {detectedCrops.length > 0 && (
-                    <optgroup label="🌱 Crops, Trees & Plants in DB">
+                    <optgroup label="Crops, Trees & Plants in DB">
                       {detectedCrops.map(item => (
                         <option key={`crop-${item}`} value={item}>
-                          🌾 {item}
+                          {item}
                         </option>
                       ))}
                     </optgroup>
                   )}
                   {allDbItemNames.filter(i => !detectedCrops.includes(i)).length > 0 && (
-                    <optgroup label="📋 All Other Inventory Items in DB">
+                    <optgroup label="All Other Inventory Items in DB">
                       {allDbItemNames.filter(i => !detectedCrops.includes(i)).map(item => (
                         <option key={`other-crop-${item}`} value={item}>
-                          📦 {item}
+                          {item}
                         </option>
                       ))}
                     </optgroup>
@@ -999,19 +999,19 @@ const Inventory = () => {
                 >
                   <option value="">-- Select Livestock from DB --</option>
                   {detectedLivestock.length > 0 && (
-                    <optgroup label="🐄 Livestock & Animals in DB">
+                    <optgroup label="Livestock & Animals in DB">
                       {detectedLivestock.map(item => (
                         <option key={`live-${item}`} value={item}>
-                          🐄 {item}
+                          {item}
                         </option>
                       ))}
                     </optgroup>
                   )}
                   {allDbItemNames.filter(i => !detectedLivestock.includes(i)).length > 0 && (
-                    <optgroup label="📋 All Other Items in DB">
+                    <optgroup label="All Other Items in DB">
                       {allDbItemNames.filter(i => !detectedLivestock.includes(i)).map(item => (
                         <option key={`other-live-${item}`} value={item}>
-                          🐾 {item}
+                          {item}
                         </option>
                       ))}
                     </optgroup>

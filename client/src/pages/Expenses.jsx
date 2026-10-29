@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
-import { IndianRupee, Plus, CheckCircle, AlertCircle, Trash2, Calendar } from 'lucide-react';
+import { IndianRupee, Plus, CheckCircle, AlertCircle, Trash2, Calendar, Sprout } from 'lucide-react';
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -182,7 +182,7 @@ const Expenses = () => {
                 </select>
                 {formData.category === 'Feed' && (
                   <div className="mt-2 p-2.5 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start space-x-2 animate-in fade-in duration-200">
-                    <span className="text-base leading-none">🌾</span>
+                    <Sprout size={16} className="text-amber-700 flex-shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold">Using own farm-grown crops (e.g. Grass, Corn, Maize)?</span>
                       <p className="text-[11px] text-amber-800 mt-0.5">
