@@ -93,23 +93,30 @@ async function sendMonthlyReportEmail({ to, farmName, monthName, year, pdfBuffer
 </html>
   `;
 
-  // Try using nodemailer if installed
+  // Try using nodemailer
   try {
     const nodemailer = require('nodemailer');
     if (process.env.SMTP_HOST) {
+      const port = Number(process.env.SMTP_PORT) || 465;
+      const isSecure = process.env.SMTP_SECURE === 'true' || port === 465;
+
+      // Ensure sender email matches SMTP user for Gmail
+      const senderAddress = process.env.SMTP_USER || NOREPLY_EMAIL;
+
       const transporter = nodemailer.createTransport({
+        service: process.env.SMTP_HOST.includes('gmail') ? 'gmail' : undefined,
         host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === 'true' || Number(process.env.SMTP_PORT) === 465,
+        port: port,
+        secure: isSecure,
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          pass: (process.env.SMTP_PASS || '').replace(/\s+/g, ''),
         },
       });
 
       const info = await transporter.sendMail({
-        from: `"${NOREPLY_NAME}" <${NOREPLY_EMAIL}>`,
-        replyTo: NOREPLY_EMAIL,
+        from: `"${NOREPLY_NAME}" <${senderAddress}>`,
+        replyTo: senderAddress,
         to,
         subject,
         html: htmlContent,
@@ -123,10 +130,11 @@ async function sendMonthlyReportEmail({ to, farmName, monthName, year, pdfBuffer
       });
 
       console.log('Monthly report sent via Nodemailer to:', to, 'MessageId:', info.messageId);
-      return { success: true, messageId: info.messageId, recipient: to, sender: NOREPLY_EMAIL };
+      return { success: true, messageId: info.messageId, recipient: to, sender: senderAddress };
     }
   } catch (nodemailerErr) {
-    // Nodemailer not installed or not configured, proceed to fallback
+    console.error('Nodemailer Error:', nodemailerErr);
+    throw nodemailerErr;
   }
 
   // Pure Node.js SMTP transport if SMTP_HOST is defined in .env
