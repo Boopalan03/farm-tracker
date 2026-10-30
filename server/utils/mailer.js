@@ -93,7 +93,40 @@ async function sendMonthlyReportEmail({ to, farmName, monthName, year, pdfBuffer
 </html>
   `;
 
-  // Try using nodemailer
+  // 1. Try sending via Resend HTTP API (Ideal for Render/Serverless since it uses port 443 HTTPS)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const { Resend } = require('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const fromEmail = process.env.RESEND_FROM || 'FarmTracker <onboarding@resend.dev>';
+
+      const data = await resend.emails.send({
+        from: fromEmail,
+        to: [to],
+        subject: subject,
+        html: htmlContent,
+        attachments: [
+          {
+            filename: attachmentFilename,
+            content: pdfBuffer,
+          },
+        ],
+      });
+
+      if (data.error) {
+        console.error('Resend API Error:', data.error);
+        throw new Error(data.error.message || 'Failed to send email via Resend');
+      }
+
+      console.log('Monthly report sent via Resend to:', to, 'ID:', data.data?.id);
+      return { success: true, messageId: data.data?.id, recipient: to, sender: fromEmail };
+    } catch (resendErr) {
+      console.error('Resend delivery failed:', resendErr);
+      throw resendErr;
+    }
+  }
+
+  // 2. Try using nodemailer (SMTP)
   try {
     const nodemailer = require('nodemailer');
     if (process.env.SMTP_HOST) {
